@@ -44,7 +44,9 @@ def index():
 @app.route('/check_genre', methods=['POST'])
 def check_index():
   text = request.json['text']
-  text = word_tokenize(text)
+  text = tokenize_text(text)
+  prediction = model.predict(text)
+  return jsonify({'prediction': prediction})
   
 '''
 if __name__ == '__main__':
