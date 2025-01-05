@@ -17,8 +17,10 @@ def create_model():
   X = pd.read_csv('data/lyrics.csv')
   X = X['Lyrics'].apply(tokenize_text)
   
+  regueton = []
   for i in range(len(X)):
     X[i] = ' '.join(X[i])
+    regueton.append(True)
   
   vectorizer = CountVectorizer()
   X = vectorizer.fit_transform(X)
@@ -27,8 +29,10 @@ def create_model():
   vocab = vectorizer.get_feature_names_out()
   print(vocab)
   
+  X["Regueton"] = regueton
+
   model = MultinomialNB()
-  model.fit(X, y)
+  model.fit(X["Lyrics"], X["Regueton"])
   pickle.dump(model, open('model.pkl', 'wb'))
   
 create_model()
