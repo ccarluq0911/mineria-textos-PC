@@ -1,0 +1,127 @@
+
+header{
+    width: 100%;
+    display: flex;
+    color: darkgoldenrod;
+}
+
+body{
+    margin: 0% 0%;
+}
+
+.presentacion{
+    background-color: rgb(0, 79, 101);
+    height: 162px;
+    width: 20%;
+    text-align: center;
+}
+
+.cambiante{
+    width: 40%;
+    height: 162px;
+    background-color: rgb(0, 79, 101);
+}
+
+.cambiante-2{
+    width: 40%;
+    height: 162px;
+    background-color: rgb(0, 79, 101);
+}
+
+.cambiante div{
+    margin-bottom: 2.6%;
+    width: 80%;
+    height: 16.2px;
+}
+
+.cambiante-2 div{
+    margin-bottom: 2.6%;
+    width: 80%;
+    height: 16.2px;
+    float: right;
+}
+
+.tira-1{
+    animation-name: cambio-color;
+    animation-delay: 2s;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+}
+
+
+.tira-2{
+    animation-name: cambio-color;
+    animation-delay: 4s;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+}
+
+
+.tira-3{
+    animation-name: cambio-color;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+}
+
+
+.tira-4{
+    animation-name: cambio-color;
+    animation-delay: 2s;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+}
+
+
+.tira-5{
+    animation-name: cambio-color;
+    animation-delay: 1s;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+}
+
+
+
+@keyframes cambio-color {
+    0%{
+        background-color: rgb(0, 79, 101);
+    }
+    50%{
+        background-color: rgb(2, 114, 145);
+    }
+    100%{
+        background-color: rgb(0, 79, 101);
+    }
+}
+
+main{
+    background-color: aquamarine;
+    padding-top: 1%;
+    text-align: center;
+}
+
+.prueba-letra{
+    border-radius: 5px;
+    border-style: solid;
+    border-color: black;
+    width: 35%;
+    margin: 0% auto;
+}
+
+.prueba-letra textarea{
+    width: 60%;
+    height: 150px;
+}
+
+.prueba-letra button{
+    
+}
+
+
+
+footer{
+    width: 100%;
+    background-color: rgb(0, 79, 101);
+    text-align: center;
+    padding: 1% 0%;
+    color: darkgoldenrod;
+}

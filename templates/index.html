@@ -3,10 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" href="../static/style/style.css">
+    <title>Mineria de textos</title>
 </head>
 <body>
-    <h2>Detector de Reggaetón</h2>
-    
+    <header>
+        <div class="cambiante">
+            <div class="tira-1"></div>
+            <div class="tira-2"></div>
+            <div class="tira-3"></div>
+            <div class="tira-4"></div>
+            <div class="tira-5"></div>
+        </div>
+        <div class="presentacion">
+            <h1>PROGRAMACION DE IA</h1>
+            <h2>Mineria de textos</h2>
+        </div>
+        <div class="cambiante-2">
+            <div class="tira-1"></div>
+            <div class="tira-2"></div>
+            <div class="tira-3"></div>
+            <div class="tira-4"></div>
+            <div class="tira-5"></div>
+
+        </div>
+    </header>
+    <main>
+        
+        <h1>Detector de Reggaetón</h1>
+        
+        <div class="prueba-letra">
+            <form action="/check_genre" method="post">
+                <h3>Introduce la letra de la cancion</h3>
+                <textarea name="" id=""></textarea>
+                <br>
+                <input type="submit" value="subir">
+            </form>
+        </div>
+        <div class="validacion">
+            <h1>¿El resultado del modelo es correcto?</h1>
+            <button id="button-tick">V</button>
+            <button id="button-cross">X</button>
+        </div>
+    </main>
+    <footer>    
+        <h1>TRABAJO REALIZADO</h1>
+        <h2>Carlos Carrasquer Luque</h2>
+        <h2>Pablo Elías Ruiz Cánovas</h2>
+    </footer>
 </body>
 </html>
