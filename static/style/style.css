@@ -105,6 +105,11 @@ main{
     border-color: black;
     width: 35%;
     margin: 0% auto;
+    transition-duration: 0.5s;
+}
+
+.prueba-letra:hover{
+    border-color: lightseagreen;
 }
 
 .prueba-letra textarea{
@@ -112,11 +117,20 @@ main{
     height: 150px;
 }
 
-.prueba-letra button{
-    
+.subir{
+    background-color: greenyellow;
+    width: 15%;
+    border-radius: 5px;
+    padding: 0.5% 0%;
+    font-size: 1em;
+    transition-duration: 0.5s;
 }
 
-
+.subir:hover{
+    cursor: pointer;
+    background-color: lightgreen;
+    transform: scale(1.1,1.1);
+}
 
 footer{
     width: 100%;
@@ -124,4 +138,31 @@ footer{
     text-align: center;
     padding: 1% 0%;
     color: darkgoldenrod;
+}
+
+#button-tick, #button-cross{
+    width: 3%;
+    border-radius: 5px;
+    padding: 0.2% 0%;
+    font-size: 1em;
+    transition-duration: 0.5s;
+}
+
+#button-tick{
+    background-color: greenyellow;
+}
+#button-cross{
+    background-color: lightcoral;
+}
+
+#button-tick:hover{
+    background-color: green;
+    cursor: pointer;
+    transform: scale(1.1,1.1);
+}
+
+#button-cross:hover{
+    background-color: darkred;
+    cursor: pointer;
+    transform: scale(1.1,1.1);
 }

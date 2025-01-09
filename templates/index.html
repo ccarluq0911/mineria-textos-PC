@@ -37,10 +37,10 @@
                 <h3>Introduce la letra de la cancion</h3>
                 <textarea name="text" id="text"></textarea>
                 <br>
-                <input type="submit" value="subir">
-                {{prediction}}
+                <button class="subir">Subir</button>
             </form>
         </div>
+        <p id="info-resultado"></p>
         <div class="validacion">
             <h1>¿El resultado del modelo es correcto?</h1>
             <button id="button-tick">V</button>
@@ -52,5 +52,29 @@
         <h2>Carlos Carrasquer Luque</h2>
         <h2>Pablo Elías Ruiz Cánovas</h2>
     </footer>
+    <script>
+
+        const comprobar = async (letra)=>{
+            
+            let url = "http://localhost:5002/check_genre"
+            const response = await fetch(url,{
+                method:"POST",
+                body:JSON.stringify(letra)
+            })
+
+            if(response.ok)
+            {
+                document.getElementById("info-resultado").textContent = "Su cancion es de regueton"
+                document.getElementById("info-resultado").style.color = "lightgreen"
+                document.getElementById("info-resultado").style.fontWeight = "bolder"
+            }
+            else
+            {
+                document.getElementById("info-resultado").textContent = "No se ha podido procesar la solicitud"
+                document.getElementById("info-resultado").style.color = "lightcoral"
+                document.getElementById("info-resultado").style.fontWeight = "bolder"
+            }
+        }
+    </script>
 </body>
 </html>
