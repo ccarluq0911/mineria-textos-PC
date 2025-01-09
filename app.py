@@ -1,33 +1,45 @@
 from flask import Flask, render_template, request, jsonify
 from sklearn.naive_bayes import MultinomialNB
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.model_selection import train_test_split
 import json
 import pickle
 import pandas as pd
 from nltk.tokenize import word_tokenize
-from sklearn.feature_extraction.text import CountVectorizer
+from nltk.corpus import stopwords
 
 app = Flask(__name__)
+# nltk.download('stopwords')
+# nltk.download('punkt')
 
 def tokenize_text(text):
   return word_tokenize(text)
 
-def create_model():
+def create_model_and_vectorizer():
   X = pd.read_csv('data/lyrics.csv')
-  y = X['Regueton']
-  X = X['Lyrics'].apply(tokenize_text)
   
-  for i in range(len(X)):
-    X[i] = ' '.join(X[i])
+  stop_words = set(stopwords.words('spanish')) 
+  stop_words.update(['.', ',', '!', '?', ';', ':', '-', '_', '(', ')', '[', ']', '{', '}', '"', "'", '...', '``', "''"])
+  X['Lyrics'] = X['Lyrics'].apply(lambda x: ' '.join([word for word in word_tokenize(x) if not word in stop_words]))
+  X['Lyrics'] = X['Lyrics'].apply(tokenize_text)
+  y = X.loc[:,'Regueton']
+  X = X.loc[:,'Lyrics']
+  X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=11)
   
   vectorizer = CountVectorizer()
-  X = vectorizer.fit_transform(X)
+  vectorizer.fit(X_train)
+  
+  pickle.dump(vectorizer, open('vectorizer.pkl', 'wb'))
+  
+  # Document Term Vector (DTV)
+  dtv = vectorizer.transform(X_train)
 
   model = MultinomialNB()
-  model.fit(X, y)
+  model.fit(dtv.toarray(), y_train)
   pickle.dump(model, open('model.pkl', 'wb'))
-  pickle.dump(vectorizer, open('vectorizer.pkl', 'wb'))
+  
 
-create_model()
+create_model_and_vectorizer()
 model = pickle.load(open('model.pkl', 'rb'))
 vectorizer = pickle.load(open('vectorizer.pkl', 'rb'))
 
