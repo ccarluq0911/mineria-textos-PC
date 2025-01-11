@@ -10,7 +10,7 @@ from nltk.corpus import stopwords
 
 app = Flask(__name__)
 # nltk.download('stopwords')
-# nltk.download('punkt')
+# nltk.download('punkt ')
 
 def clean_text(text):
   stop_words = set(stopwords.words('spanish')) 
@@ -48,11 +48,16 @@ def index():
 
 @app.route('/check_genre', methods=['POST'])
 def check_index():
-  text = request.form['text']
+  text = request.data.decode("utf-8") # se obtiene el texto por el body
+  # text = request.form['text'] se elimino el formulario en html
   text = clean_text(text)
-  text = vectorizer.transform(text)
+  # metemos el text en una lista para el vectorizador
+  text_vect = []
+  text_vect.append(text)
+  text = vectorizer.transform(text_vect)
   prediction = model.predict(text)
-  return render_template('index.html', prediction=bool(prediction[0]))
+  # return render_template('index.html', prediction=bool(prediction[0])) se queda comentado ya que no necesitamos devolver otro html
+  return jsonify({"prediction":prediction}),200
 
 @app.route('/feedback', methods=['POST'])
 def feedback():

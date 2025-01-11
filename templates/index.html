@@ -33,12 +33,10 @@
         <h1>Detector de Reggaetón</h1>
         
         <div class="prueba-letra">
-            <form action="/check_genre" method="post" accept="application/json">
-                <h3>Introduce la letra de la cancion</h3>
-                <textarea name="text" id="text"></textarea>
-                <br>
-                <button class="subir">Subir</button>
-            </form>
+            <h3>Introduce la letra de la cancion</h3>
+            <textarea name="text" id="text"></textarea>
+            <br>
+            <button class="subir" onclick="comprobar()">Subir</button>
         </div>
         <p id="info-resultado"></p>
         <div class="validacion">
@@ -54,12 +52,12 @@
     </footer>
     <script>
 
-        const comprobar = async (letra)=>{
-            
+        const comprobar = async ()=>{
+            const texto = document.getElementById("text").value
             let url = "http://localhost:5002/check_genre"
             const response = await fetch(url,{
                 method:"POST",
-                body:JSON.stringify(letra)
+                body:JSON.stringify(texto)
             })
 
             if(response.ok)
@@ -71,7 +69,7 @@
             else
             {
                 document.getElementById("info-resultado").textContent = "No se ha podido procesar la solicitud"
-                document.getElementById("info-resultado").style.color = "lightcoral"
+                document.getElementById("info-resultado").style.color = "darkred"
                 document.getElementById("info-resultado").style.fontWeight = "bolder"
             }
         }
