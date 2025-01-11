@@ -12,22 +12,22 @@ app = Flask(__name__)
 # nltk.download('stopwords')
 # nltk.download('punkt')
 
-def tokenize_text(text):
-  return word_tokenize(text)
-
+def clean_text(text):
+  stop_words = set(stopwords.words('spanish')) 
+  stop_words.update(['.', ',', '!', '?', ';', ':', '-', '_', '(', ')', '[', ']', '{', '}', '"', "'", '...', '``', "''"])
+  text = ' '.join([word for word in word_tokenize(text) if not word in stop_words])
+  return text
+  
 def create_model_and_vectorizer():
   X = pd.read_csv('data/lyrics.csv')
   
-  stop_words = set(stopwords.words('spanish')) 
-  stop_words.update(['.', ',', '!', '?', ';', ':', '-', '_', '(', ')', '[', ']', '{', '}', '"', "'", '...', '``', "''"])
-  X['Lyrics'] = X['Lyrics'].apply(lambda x: ' '.join([word for word in word_tokenize(x) if not word in stop_words]))
-  X['Lyrics'] = X['Lyrics'].apply(tokenize_text)
+  X['Lyrics'] = X['Lyrics'].apply(clean_text)
   y = X.loc[:,'Regueton']
   X = X.loc[:,'Lyrics']
-  X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=11)
+  X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
   
   vectorizer = CountVectorizer()
-  vectorizer.fit(X_train)
+  vectorizer.fit(X_train.to_list())
   
   pickle.dump(vectorizer, open('vectorizer.pkl', 'wb'))
   
@@ -38,8 +38,7 @@ def create_model_and_vectorizer():
   model.fit(dtv.toarray(), y_train)
   pickle.dump(model, open('model.pkl', 'wb'))
   
-
-create_model_and_vectorizer()
+# create_model_and_vectorizer()
 model = pickle.load(open('model.pkl', 'rb'))
 vectorizer = pickle.load(open('vectorizer.pkl', 'rb'))
 
@@ -50,10 +49,23 @@ def index():
 @app.route('/check_genre', methods=['POST'])
 def check_index():
   text = request.form['text']
-  text = tokenize_text(text)
+  text = clean_text(text)
   text = vectorizer.transform(text)
   prediction = model.predict(text)
   return render_template('index.html', prediction=bool(prediction[0]))
+
+@app.route('/feedback', methods=['POST'])
+def feedback():
+  feedback = request.form['feedback']
+  feedback = json.loads(feedback)
+  feedback = pd.DataFrame(feedback)
+  feedback['Lyrics'] = feedback['Lyrics'].apply(clean_text)
+  y = feedback.loc[:,'Regueton']
+  X = feedback.loc[:,'Lyrics']
+  X = vectorizer.transform(X)
+  model.partial_fit(X.toarray(), y)
+  pickle.dump(model, open('model.pkl', 'wb'))
+  return jsonify({'status': 'ok'})
 
 if __name__ == '__main__':
   app.run(
