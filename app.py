@@ -37,7 +37,8 @@ def create_model_and_vectorizer():
   model = MultinomialNB()
   model.fit(dtv.toarray(), y_train)
   pickle.dump(model, open('model.pkl', 'wb'))
-  
+
+# Comentamos para no reiniciar el modelo cada vez que se inicia el servidor  
 # create_model_and_vectorizer()
 model = pickle.load(open('model.pkl', 'rb'))
 vectorizer = pickle.load(open('vectorizer.pkl', 'rb'))
@@ -56,8 +57,7 @@ def check_index():
   text_vect.append(text)
   text = vectorizer.transform(text_vect)
   prediction = model.predict(text)
-  # return render_template('index.html', prediction=bool(prediction[0])) se queda comentado ya que no necesitamos devolver otro html
-  return jsonify({"prediction":prediction}),200
+  return {'prediction': bool(prediction[0])}
 
 @app.route('/feedback', methods=['POST'])
 def feedback():

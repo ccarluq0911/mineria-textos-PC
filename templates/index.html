@@ -1,78 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../static/style/style.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../static/style/style.css" />
+    <script src="../static/main.js"></script>
     <title>Mineria de textos</title>
-</head>
-<body>
+  </head>
+  <body>
     <header>
-        <div class="cambiante">
-            <div class="tira-1"></div>
-            <div class="tira-2"></div>
-            <div class="tira-3"></div>
-            <div class="tira-4"></div>
-            <div class="tira-5"></div>
-        </div>
-        <div class="presentacion">
-            <h1>PROGRAMACION DE IA</h1>
-            <h2>Mineria de textos</h2>
-        </div>
-        <div class="cambiante-2">
-            <div class="tira-1"></div>
-            <div class="tira-2"></div>
-            <div class="tira-3"></div>
-            <div class="tira-4"></div>
-            <div class="tira-5"></div>
-
-        </div>
+      <div class="cambiante">
+        <div class="tira-1"></div>
+        <div class="tira-2"></div>
+        <div class="tira-3"></div>
+        <div class="tira-4"></div>
+        <div class="tira-5"></div>
+      </div>
+      <div class="presentacion">
+        <h1>PROGRAMACION DE IA</h1>
+        <h2>Mineria de textos</h2>
+      </div>
+      <div class="cambiante-2">
+        <div class="tira-1"></div>
+        <div class="tira-2"></div>
+        <div class="tira-3"></div>
+        <div class="tira-4"></div>
+        <div class="tira-5"></div>
+      </div>
     </header>
     <main>
-        
-        <h1>Detector de Reggaetón</h1>
-        
-        <div class="prueba-letra">
-            <h3>Introduce la letra de la cancion</h3>
-            <textarea name="text" id="text"></textarea>
-            <br>
-            <button class="subir" onclick="comprobar()">Subir</button>
-        </div>
-        <p id="info-resultado"></p>
-        <div class="validacion">
-            <h1>¿El resultado del modelo es correcto?</h1>
-            <button id="button-tick">V</button>
-            <button id="button-cross">X</button>
-        </div>
+      <h1>Detector de Reggaetón</h1>
+      <div class="prueba-letra">
+        <h3>Introduce la letra de la cancion</h3>
+        <textarea name="text" id="text"></textarea>
+        <br />
+        <button class="subir" onclick="comprobar()">Subir</button>
+      </div>
+      <p id="info-resultado"></p>
+      <div class="validacion">
+        <h1>¿El resultado del modelo es correcto?</h1>
+        <button id="button-tick">V</button>
+        <button id="button-cross">X</button>
+      </div>
     </main>
-    <footer>    
-        <h1>TRABAJO REALIZADO</h1>
-        <h2>Carlos Carrasquer Luque</h2>
-        <h2>Pablo Elías Ruiz Cánovas</h2>
+    <footer>
+      <h1>TRABAJO REALIZADO</h1>
+      <h2>Carlos Carrasquer Luque</h2>
+      <h2>Pablo Elías Ruiz Cánovas</h2>
     </footer>
-    <script>
-
-        const comprobar = async ()=>{
-            const texto = document.getElementById("text").value
-            let url = "http://localhost:5002/check_genre"
-            const response = await fetch(url,{
-                method:"POST",
-                body:JSON.stringify(texto)
-            })
-
-            if(response.ok)
-            {
-                document.getElementById("info-resultado").textContent = "Su cancion es de regueton"
-                document.getElementById("info-resultado").style.color = "lightgreen"
-                document.getElementById("info-resultado").style.fontWeight = "bolder"
-            }
-            else
-            {
-                document.getElementById("info-resultado").textContent = "No se ha podido procesar la solicitud"
-                document.getElementById("info-resultado").style.color = "darkred"
-                document.getElementById("info-resultado").style.fontWeight = "bolder"
-            }
-        }
-    </script>
-</body>
+  </body>
 </html>
