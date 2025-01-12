@@ -61,9 +61,12 @@ def check_index():
 
 @app.route('/feedback', methods=['POST'])
 def feedback():
-  feedback = request.form['feedback']
-  feedback = json.loads(feedback)
-  feedback = pd.DataFrame(feedback)
+  validation = request.headers.get("validation",type=bool)
+  texto = request.data.decode("utf-8") #se obtiene el texto por el body
+  # feedback = request.form['feedback'] se elimino el formulario en html
+  
+  # feedback = json.loads(feedback) se decodifica al obtenerlo por el body
+  feedback = pd.DataFrame(data={"Lyrics":[texto],"Regueton":[validation]})
   feedback['Lyrics'] = feedback['Lyrics'].apply(clean_text)
   y = feedback.loc[:,'Regueton']
   X = feedback.loc[:,'Lyrics']

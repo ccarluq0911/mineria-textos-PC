@@ -39,8 +39,9 @@
       <p id="info-resultado"></p>
       <div class="validacion">
         <h1>¿El resultado del modelo es correcto?</h1>
-        <button id="button-tick">V</button>
-        <button id="button-cross">X</button>
+        <button id="button-tick" onclick="feedback(true)">V</button>
+        <button id="button-cross" onclick="feedback(false)">X</button>
+        <h3 id="info-feedback"></h3>
       </div>
     </main>
     <footer>
