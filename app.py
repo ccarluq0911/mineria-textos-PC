@@ -50,7 +50,6 @@ def index():
 @app.route('/check_genre', methods=['POST'])
 def check_index():
   text = request.data.decode("utf-8") # se obtiene el texto por el body
-  # text = request.form['text'] se elimino el formulario en html
   text = clean_text(text)
   # metemos el text en una lista para el vectorizador
   text_vect = []
@@ -63,9 +62,6 @@ def check_index():
 def feedback():
   validation = request.headers.get("validation",type=bool)
   texto = request.data.decode("utf-8") #se obtiene el texto por el body
-  # feedback = request.form['feedback'] se elimino el formulario en html
-  
-  # feedback = json.loads(feedback) se decodifica al obtenerlo por el body
   feedback = pd.DataFrame(data={"Lyrics":[texto],"Regueton":[validation]})
   feedback['Lyrics'] = feedback['Lyrics'].apply(clean_text)
   y = feedback.loc[:,'Regueton']
