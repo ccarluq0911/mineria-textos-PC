@@ -1,3 +1,5 @@
 .venv
 .pycache
 python
+dist
+build
