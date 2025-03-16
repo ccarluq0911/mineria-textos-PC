@@ -1,9 +1,8 @@
 from flask import Flask, render_template, request, jsonify
-import flask_cors as CORS
+from flask_cors import CORS
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split
-import json
 import pickle
 from pydub import AudioSegment
 import os
