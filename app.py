@@ -18,13 +18,9 @@ app = Flask(__name__)
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-@app.route('/transcribe', methods=['POST'])
-def transcribe_audio():
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file uploaded'}), 400
-
-    file = request.files['file']
-    filename = os.path.join(UPLOAD_FOLDER, file.filename)
+def transcribe_audio(file):
+    """Transcribe un archivo de audio y devuelve el texto."""
+    filename = os.path.join("uploads", file.filename)
     file.save(filename)
 
     # Convertir a WAV si es necesario
@@ -34,24 +30,21 @@ def transcribe_audio():
         audio.export(filename, format="wav")
 
     recognizer = sr.Recognizer()
-    
     try:
         with sr.AudioFile(filename) as source:
             audio = recognizer.record(source)
-            text = recognizer.recognize_google(audio, language="es-ES")  # Cambia el idioma si es necesario
-
-        return jsonify({'transcription': text})
-    
+            text = recognizer.recognize_google(audio, language="es-ES")
+        
+        return text
     except sr.UnknownValueError:
-        return jsonify({'error': 'No se pudo entender el audio'}), 400
+        return "No se pudo entender el audio"
     except sr.RequestError:
-        return jsonify({'error': 'Error con el servicio de reconocimiento'}), 500
+        return "Error con el servicio de reconocimiento"
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
-    
+        return str(e)
     finally:
         os.remove(filename)  # Eliminar archivo después de la transcripción
-
+        
 def clean_text(text):
   stop_words = set(stopwords.words('spanish')) 
   stop_words.update(['.', ',', '!', '?', ';', ':', '-', '_', '(', ')', '[', ']', '{', '}', '"', "'", '...', '``', "''"])
@@ -88,15 +81,20 @@ def index():
   return render_template('index.html')
 
 @app.route('/check_genre', methods=['POST'])
-def check_index():
-  text = request.data.decode("utf-8") # se obtiene el texto por el body
-  text = clean_text(text)
-  # metemos el text en una lista para el vectorizador
-  text_vect = []
-  text_vect.append(text)
-  text = vectorizer.transform(text_vect)
-  prediction = model.predict(text)
-  return {'prediction': bool(prediction[0])}
+def check_genre():
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file uploaded'}), 400
+    
+    file = request.files['file']
+    text = transcribe_audio(file)
+    
+    text = clean_text(text)
+    text_vect = [text]  # Se mete el texto en una lista para el vectorizador
+    text = vectorizer.transform(text_vect)
+    prediction = model.predict(text)
+    
+    return {'prediction': bool(prediction[0])}
+
 
 @app.route('/feedback', methods=['POST'])
 def feedback():
