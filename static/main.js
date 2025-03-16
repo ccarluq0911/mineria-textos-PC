@@ -109,3 +109,82 @@ const cortar = (interval)=>{
     document.getElementById("color-feed").style.color = "black"
     clearInterval(interval)
 }
+
+
+
+let mediaRecorder;
+let audioChunks = [];
+
+// Función para iniciar la grabación
+async function startRecording() {
+    try {
+        // Solicitar acceso al micrófono
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+        // Crear un MediaRecorder para manejar la grabación
+        mediaRecorder = new MediaRecorder(stream);
+
+        mediaRecorder.ondataavailable = event => {
+            audioChunks.push(event.data);
+        };
+
+        mediaRecorder.onstop = () => {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+            const audioUrl = URL.createObjectURL(audioBlob);
+            const audio = new Audio(audioUrl);
+            audio.controls = true;
+            document.body.appendChild(audio); // Añadir el reproductor de audio al cuerpo de la página
+        };
+
+        // Iniciar la grabación
+        mediaRecorder.start();
+        console.log("Grabación iniciada...");
+    } catch (error) {
+        console.error("No se pudo acceder al micrófono:", error);
+        alert("Error al acceder al micrófono. Asegúrate de que el navegador tiene permisos para usarlo.");
+    }
+}
+
+async function stopRecording() {
+    if (mediaRecorder) {
+        mediaRecorder.stop();
+        console.log("Grabación detenida.");
+
+        // Crear un Blob a partir de los datos de la grabación
+        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+
+        // Crear un FormData para enviar el archivo
+        const formData = new FormData();
+        formData.append("file", audioBlob, "audio.webm");  // Agregar el Blob como archivo con un nombre
+
+        try {
+            // Enviar el archivo al endpoint /check_genre
+            const response = await fetch("http://localhost:5002/check_genre", {
+                method: "POST",
+                body: formData,
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                const prediction = data.prediction;
+
+                // Mostrar la predicción del género
+                document.getElementById("info-resultado").textContent = prediction ? "Su canción es de reguetón" : "Su canción no es de reguetón";
+                document.getElementById("info-resultado").style.color = prediction ? "green" : "red";
+                document.getElementById("info-resultado").style.fontWeight = "bolder";
+            } else {
+                console.error("Error al enviar el archivo");
+                alert("No se pudo procesar la solicitud.");
+            }
+        } catch (error) {
+            console.error("Error al enviar el archivo:", error);
+            alert("Error al procesar la grabación.");
+        }
+    } else {
+        console.log("No hay grabación en curso.");
+    }
+}
+
+// Conectar los botones con las funciones
+document.getElementById("startRecordingButton").onclick = startRecording;
+document.getElementById("stopRecordingButton").onclick = stopRecording;
