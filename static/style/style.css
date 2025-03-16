@@ -2,7 +2,8 @@
 header{
     width: 100%;
     display: flex;
-    color: darkgoldenrod;
+    color: black;
+    font-weight: bolder;
 }
 
 body{
@@ -10,7 +11,7 @@ body{
 }
 
 .presentacion{
-    background-color: rgb(0, 79, 101);
+    background-color: rgb(151, 66, 0);
     height: 162px;
     width: 20%;
     text-align: center;
@@ -19,13 +20,13 @@ body{
 .cambiante{
     width: 40%;
     height: 162px;
-    background-color: rgb(0, 79, 101);
+    background-color: rgb(151, 66, 0);
 }
 
 .cambiante-2{
     width: 40%;
     height: 162px;
-    background-color: rgb(0, 79, 101);
+    background-color: rgb(151, 66, 0);
 }
 
 .cambiante div{
@@ -83,18 +84,18 @@ body{
 
 @keyframes cambio-color {
     0%{
-        background-color: rgb(0, 79, 101);
+        background-color: rgb(255, 146, 63);
     }
     50%{
-        background-color: rgb(2, 114, 145);
+        background-color: rgb(187, 102, 37);
     }
     100%{
-        background-color: rgb(0, 79, 101);
+        background-color: rgb(151, 66, 0);
     }
 }
 
 main{
-    background-color: aquamarine;
+    background-color: bisque;
     padding-top: 1%;
     text-align: center;
     padding: 1.5% 0%;
@@ -136,13 +137,13 @@ main{
 
 footer{
     width: 100%;
-    background-color: rgb(0, 79, 101);
+    background-color: rgb(151, 66, 0);
     text-align: center;
     padding: 3% 0%;
-    color: darkgoldenrod;
+    color: black;
 }
 
-#button-tick, #button-cross{
+#button-tick, #button-cross,#button-rec,#button-stop{
     width: 8%;
     border-radius: 5px;
     padding: 0.2% 0%;
@@ -150,21 +151,30 @@ footer{
     transition-duration: 0.5s;
 }
 
-#button-tick{
+#button-tick,#button-rec{
     background-color: greenyellow;
 }
-#button-cross{
+#button-cross,#button-stop{
     background-color: lightcoral;
 }
 
-#button-tick:hover{
+#button-tick:hover,#button-rec:hover{
     background-color: green;
     cursor: pointer;
     transform: scale(1.1,1.1);
 }
 
-#button-cross:hover{
+#button-cross:hover,#button-stop:hover{
     background-color: darkred;
     cursor: pointer;
     transform: scale(1.1,1.1);
+}
+
+.grabacion,.validacion{
+    margin: 3% auto;
+}
+
+#button-rec,#button-stop{
+    width: 20%;
+    margin-bottom: 5%;
 }
