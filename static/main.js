@@ -117,6 +117,8 @@ let audioChunks = [];
 
 // Función para iniciar la grabación
 async function startRecording() {
+    const recButton = document.getElementById("button-rec");
+    const stopButton = document.getElementById("button-stop");
     try {
         // Solicitar acceso al micrófono
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -136,6 +138,9 @@ async function startRecording() {
             document.body.appendChild(audio); // Añadir el reproductor de audio al cuerpo de la página
         };
 
+        recButton.disabled = true;
+        stopButton.disabled = false;
+
         // Iniciar la grabación
         mediaRecorder.start();
         console.log("Grabación iniciada...");
@@ -146,7 +151,13 @@ async function startRecording() {
 }
 
 async function stopRecording() {
+    const recButton = document.getElementById("button-rec");
+    const stopButton = document.getElementById("button-stop");
     if (mediaRecorder) {
+
+        recButton.disabled = false;
+        stopButton.disabled = true;
+
         mediaRecorder.stop();
         console.log("Grabación detenida.");
 
@@ -184,7 +195,3 @@ async function stopRecording() {
         console.log("No hay grabación en curso.");
     }
 }
-
-// Conectar los botones con las funciones
-document.getElementById("startRecordingButton").onclick = startRecording;
-document.getElementById("stopRecordingButton").onclick = stopRecording;
