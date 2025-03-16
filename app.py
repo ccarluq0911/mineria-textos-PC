@@ -96,20 +96,6 @@ def check_genre():
     
     return {'prediction': bool(prediction[0])}
 
-
-@app.route('/feedback', methods=['POST'])
-def feedback():
-  validation = request.headers.get("validation",type=bool)
-  texto = request.data.decode("utf-8") #se obtiene el texto por el body
-  feedback = pd.DataFrame(data={"Lyrics":[texto],"Regueton":[validation]})
-  feedback['Lyrics'] = feedback['Lyrics'].apply(clean_text)
-  y = feedback.loc[:,'Regueton']
-  X = feedback.loc[:,'Lyrics']
-  X = vectorizer.transform(X)
-  model.partial_fit(X.toarray(), y)
-  pickle.dump(model, open('model.pkl', 'wb'))
-  return jsonify({'status': 'ok'})
-
 if __name__ == '__main__':
   app.run(
     host='localhost',
