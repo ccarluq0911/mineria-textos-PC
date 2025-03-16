@@ -32,18 +32,10 @@
       <h1>Detector de Reggaetón</h1>
       <div class="prueba-letra">
         <h3>Grábate cantando</h3>
-        <button id="button-rec">Grabar</button>
-        <button id="button-stop" disabled>Parar de grabar</button>
-        <br />
-        <button class="subir" onclick="comprobar()">Subir</button>
+        <button id="button-rec" onclick="startRecording()">Grabar</button>
+        <button id="button-stop"  onclick="stopRecording()" disabled>Parar de grabar</button>
       </div>
       <p id="info-resultado"></p>
-      <div class="validacion">
-        <h1>Valida el resultado</h1>
-        <button id="button-tick" onclick="feedback(true)">Regueton</button>
-        <button id="button-cross" onclick="feedback(false)">No regueton</button>
-        <h3 id="info-feedback"></h3>
-      </div>
     </main>
     <footer>
       <h1>TRABAJO REALIZADO</h1>
