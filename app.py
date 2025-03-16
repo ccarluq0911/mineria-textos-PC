@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify
+import flask_cors as CORS
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split
@@ -12,6 +13,7 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "http://localhost:5002"}})
 # nltk.download('stopwords')
 # nltk.download('punkt ')
 
