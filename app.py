@@ -4,6 +4,9 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split
 import json
 import pickle
+from pydub import AudioSegment
+import os
+import speech_recognition as sr
 import pandas as pd
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
@@ -11,6 +14,43 @@ from nltk.corpus import stopwords
 app = Flask(__name__)
 # nltk.download('stopwords')
 # nltk.download('punkt ')
+
+UPLOAD_FOLDER = "uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+@app.route('/transcribe', methods=['POST'])
+def transcribe_audio():
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file uploaded'}), 400
+
+    file = request.files['file']
+    filename = os.path.join(UPLOAD_FOLDER, file.filename)
+    file.save(filename)
+
+    # Convertir a WAV si es necesario
+    if filename.endswith('.mp3'):
+        audio = AudioSegment.from_mp3(filename)
+        filename = filename.replace('.mp3', '.wav')
+        audio.export(filename, format="wav")
+
+    recognizer = sr.Recognizer()
+    
+    try:
+        with sr.AudioFile(filename) as source:
+            audio = recognizer.record(source)
+            text = recognizer.recognize_google(audio, language="es-ES")  # Cambia el idioma si es necesario
+
+        return jsonify({'transcription': text})
+    
+    except sr.UnknownValueError:
+        return jsonify({'error': 'No se pudo entender el audio'}), 400
+    except sr.RequestError:
+        return jsonify({'error': 'Error con el servicio de reconocimiento'}), 500
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+    finally:
+        os.remove(filename)  # Eliminar archivo después de la transcripción
 
 def clean_text(text):
   stop_words = set(stopwords.words('spanish')) 
