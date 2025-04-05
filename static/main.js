@@ -110,8 +110,6 @@ const cortar = (interval)=>{
     clearInterval(interval)
 }
 
-
-
 let mediaRecorder;
 let audioChunks = [];
 
@@ -119,7 +117,8 @@ let audioChunks = [];
 async function startRecording() {
     const recButton = document.getElementById("button-rec");
     const stopButton = document.getElementById("button-stop");
-    try {
+    try 
+    {
         // Solicitar acceso al micrófono
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
@@ -144,7 +143,9 @@ async function startRecording() {
         // Iniciar la grabación
         mediaRecorder.start();
         console.log("Grabación iniciada...");
-    } catch (error) {
+    } 
+    catch (error)
+    {
         console.error("No se pudo acceder al micrófono:", error);
         alert("Error al acceder al micrófono. Asegúrate de que el navegador tiene permisos para usarlo.");
     }
@@ -153,7 +154,10 @@ async function startRecording() {
 async function stopRecording() {
     const recButton = document.getElementById("button-rec");
     const stopButton = document.getElementById("button-stop");
-    if (mediaRecorder) {
+    const texto = document.getElementById("text").value
+
+    if (mediaRecorder)
+    {
 
         recButton.disabled = false;
         stopButton.disabled = true;
@@ -168,30 +172,118 @@ async function stopRecording() {
         const formData = new FormData();
         formData.append("file", audioBlob, "audio.webm");  // Agregar el Blob como archivo con un nombre
 
-        try {
+        try 
+        {
             // Enviar el archivo al endpoint /check_genre
-            const response = await fetch("http://localhost:5002/check_genre", {
+            const data = await fetch("http://localhost:5002/upload-audio", {
                 method: "POST",
                 body: formData,
             });
 
-            if (response.ok) {
-                const data = await response.json();
-                const prediction = data.prediction;
-
-                // Mostrar la predicción del género
-                document.getElementById("info-resultado").textContent = prediction ? "Su canción es de reguetón" : "Su canción no es de reguetón";
-                document.getElementById("info-resultado").style.color = prediction ? "green" : "red";
-                document.getElementById("info-resultado").style.fontWeight = "bolder";
-            } else {
-                console.error("Error al enviar el archivo");
-                alert("No se pudo procesar la solicitud.");
+            if(data.ok)
+            {
+                infoAudio.textContent = "Audio recibido exitosamente";
+                infoAudio.style.color = "green";
+        
+                texto = await data.text()
             }
-        } catch (error) {
+            else
+            {
+                infoAudio.textContent = "El audio no ha podido ser procesado";
+                infoAudio.style.color = "darkred";
+            }
+        } 
+        catch (error) 
+        {
             console.error("Error al enviar el archivo:", error);
             alert("Error al procesar la grabación.");
         }
-    } else {
+    } 
+    else 
+    {
         console.log("No hay grabación en curso.");
     }
 }
+
+const onChangeFile = ()=>{
+    console.log("Algo")
+    const fichero = document.getElementById("file");
+    const botonF = document.getElementById("subir-f");
+    
+    if(fichero.files.length > 0)
+    {
+        botonF.disabled = false
+    }
+    else
+    {
+        botonF.disabled = true
+    }
+}
+
+const subirAudio = async()=>{
+    const audio = document.getElementById("file").input.files[0];
+    const infoAudio = document.getElementById("info-audio");
+    const texto = document.getElementById("text").value
+    const url = "http:localhost:5002/upload-audio";
+    const formData = FormData()
+    formData.append(audio)
+
+    const data = await fetch(url,{
+        method:"POST",
+        body:formData
+    })
+
+    if(data.ok)
+    {
+        infoAudio.textContent = "Audio recibido exitosamente";
+        infoAudio.style.color = "green";
+
+        texto = await data.text()
+    }
+    else
+    {
+        infoAudio.textContent = "El audio no ha podido ser procesado";
+        infoAudio.style.color = "darkred";
+    }
+
+}
+
+const onChangeTrad = async()=>{
+    const texto = document.getElementById("text").value
+    const botonTrad = document.getElementById("boton-trad");
+    const infoTrad = document.getElementById("info-trad");
+
+    botonTrad.disabled = texto.trim()=="";
+
+    infoTrad.style.color = "darkred";
+
+    infoTrad.textContent = texto.trim()=="" ? "Hay que colocar texto para traducir" : "";
+}
+
+const traducir = async()=>{
+    const texto = document.getElementById("text").value
+    const infoTrad = document.getElementById("info-trad");
+
+    const url = "http://localhost:5002/traduce";
+    let body = {
+        "text":texto
+    }
+
+    const data = await fetch(url,{
+        method:"POST",
+        body:JSON.stringify(body)
+    })
+
+    if(data.ok)
+    {
+        texto.value = await data.text()
+        infoTrad.textContent = "Texto traducido con éxito";
+        infoTrad.style.color = "green";
+    }
+    {
+        infoTrad.textContent = "Error al traducir el texto";
+        infoTrad.style.color = "darkred";
+    }
+
+}
+

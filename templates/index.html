@@ -31,17 +31,37 @@
     <main>
       <h1>Detector de Reggaetón</h1>
       <div class="prueba-letra">
-        <h3>Grábate cantando</h3>
-        <button id="button-rec" onclick="startRecording()">Grabar</button>
-        <button id="button-stop"  onclick="stopRecording()" disabled>Parar de grabar</button>
+        <h3>Introduce la letra de la cancion</h3>
+        <textarea name="text" id="text" onkeyup="onChangeTrad()"></textarea>
+        <br />
+        <button class="subir" onclick="comprobar()">Subir</button>
       </div>
       <p id="info-resultado"></p>
+      <div class="validacion">
+        <h1>Valida el resultado</h1>
+        <button id="button-tick" onclick="feedback(true)">Regueton</button>
+        <button id="button-cross" onclick="feedback(false)">No regueton</button>
+        <h3 id="info-feedback"></h3>
+      </div>
+      <div class="audio">
+        <h1>Sube tu audio</h1>
+        <button id="boton-grabar">Grabar</button>
+        <button id="boton-stop" disabled>Parar</button>
+        <input type="file" id="file" accept="audio/*" oninput="onChangeFile()">
+        <button id="subir-f" disabled>Subir</button>
+        <h3 id="info-audio"></h3>
+      </div>
+      <div class="traduccion">
+        <h1>Traduce tu canción del inglés al español</h1>
+        <button id="boton-trad" disabled>Traducir</button>
+        <h3 id="info-trad">Hay que colocar texto para traducir</h3>
+      </div>
     </main>
     <footer>
       <h1>TRABAJO REALIZADO</h1>
       <h2>Carlos Carrasquer Luque</h2>
       <h2>Pablo Elías Ruiz Cánovas</h2>
-      <h2>Erich Leonardo Hamm</h2>
+      <h2>Erich Leonardo Hamn</h2>
     </footer>
   </body>
 </html>
