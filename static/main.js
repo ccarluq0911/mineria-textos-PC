@@ -55,8 +55,8 @@ const cortar = (interval)=>{
 
 // Función para iniciar la grabación
 async function startRecording() {
-    const recButton = document.getElementById("button-rec");
-    const stopButton = document.getElementById("button-stop");
+    const recButton = document.getElementById("boton-grabar");
+    const stopButton = document.getElementById("boton-stop");
     try 
     {
         // Solicitar acceso al micrófono
@@ -92,9 +92,10 @@ async function startRecording() {
 }
 
 async function stopRecording() {
-    const recButton = document.getElementById("button-rec");
-    const stopButton = document.getElementById("button-stop");
-    const texto = document.getElementById("text").value
+    const recButton = document.getElementById("boton-grabar");
+    const stopButton = document.getElementById("boton-stop");
+    const infoAudio = document.getElementById("info-audio");
+    let texto = document.getElementById("text").value
 
     if (mediaRecorder) {
         recButton.disabled = false;
@@ -152,7 +153,7 @@ const onChangeFile = ()=>{
 const subirAudio = async()=>{
     const audio = document.getElementById("file").input.files[0];
     const infoAudio = document.getElementById("info-audio");
-    const texto = document.getElementById("text").value
+    let texto = document.getElementById("text").value
     const url = "http:localhost:5002/upload-audio";
     const formData = FormData()
     formData.append(audio)

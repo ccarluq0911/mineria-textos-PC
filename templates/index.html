@@ -32,13 +32,13 @@
       <h1>Detector de Reggaetón</h1>
       <div class="prueba-letra">
         <h3>Introduce la letra de la cancion</h3>
-        <textarea name="text" id="text" onkeyup="onChangeTrad()"></textarea>
+        <textarea name="text" id="text"></textarea>
         <br />
         <button class="subir" onclick="comprobar()">Subir</button>
         <h3>O</h3>
         <h1>Sube tu audio</h1>
-        <button id="boton-grabar">Grabar</button>
-        <button id="boton-stop" disabled>Parar</button>
+        <button id="boton-grabar" onclick="startRecording()">Grabar</button>
+        <button id="boton-stop" onclick="stopRecording()" disabled>Parar</button>
         <input type="file" id="file" accept="audio/*" oninput="onChangeFile()">
         <button id="subir-f" disabled>Subir</button>
         <h3 id="info-audio"></h3>
