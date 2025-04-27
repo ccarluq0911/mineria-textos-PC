@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split
@@ -8,11 +8,13 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from langdetect import detect
 from deep_translator import GoogleTranslator
+import os
+import speech_recognition as sr
+from pydub import AudioSegment
 
 app = Flask(__name__)
 # nltk.download('stopwords')
 # nltk.download('punkt ')
-
 
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -43,8 +45,6 @@ def transcribe_audio(file):
         return str(e)
     finally:
         os.remove(filename)  # Eliminar archivo después de la transcripción
-
-
 
 def translate_to_spanish(text):
     idioma = detect(text)
@@ -89,6 +89,15 @@ def create_model_and_vectorizer():
 model = pickle.load(open('model.pkl', 'rb'))
 vectorizer = pickle.load(open('vectorizer.pkl', 'rb'))
 
+def make_prediction(text):
+  text = clean_text(text)
+  # Metemos el text en una lista para el vectorizador
+  text_vect = []
+  text_vect.append(text)
+  text = vectorizer.transform(text_vect)
+  prediction = model.predict(text)
+  return bool(prediction[0])
+
 @app.route('/')
 def index():
   return render_template('index.html')
@@ -96,13 +105,16 @@ def index():
 @app.route('/check_genre', methods=['POST'])
 def check_index():
   text = request.data.decode("utf-8") # se obtiene el texto por el body
-  text = clean_text(text)
-  # metemos el text en una lista para el vectorizador
-  text_vect = []
-  text_vect.append(text)
-  text = vectorizer.transform(text_vect)
-  prediction = model.predict(text)
-  return {'prediction': bool(prediction[0])}
+  return {'prediction': make_prediction(text)}
+  
+@app.route('/upload-audio', methods=['POST'])
+def upload_audio():
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file uploaded'}), 400
+    
+    file = request.files['file']
+    text = transcribe_audio(file)
+    return {'prediction': make_prediction(text)}
 
 if __name__ == '__main__':
   app.run(
