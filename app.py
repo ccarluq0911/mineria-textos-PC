@@ -6,12 +6,26 @@ import pickle
 import pandas as pd
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
+from langdetect import detect
+from deep_translator import GoogleTranslator
 
 app = Flask(__name__)
 # nltk.download('stopwords')
 # nltk.download('punkt ')
 
+def translate_to_spanish(text):
+    idioma = detect(text)
+   
+    if idioma == 'es':
+        return text
+    else:
+        traduccion = GoogleTranslator(source='auto', target='es').translate(text)
+        return traduccion
+      
 def clean_text(text):
+  text = translate_to_spanish(text)
+  text = text.lower()
+  text = text.replace('\n', ' ')
   stop_words = set(stopwords.words('spanish')) 
   stop_words.update(['.', ',', '!', '?', ';', ':', '-', '_', '(', ')', '[', ']', '{', '}', '"', "'", '...', '``', "''"])
   text = ' '.join([word for word in word_tokenize(text) if not word in stop_words])
