@@ -128,7 +128,7 @@ main{
     padding: 0.5% 0%;
     font-size: 1em;
     transition-duration: 0.5s;
-    margin-bottom: 2%;
+    margin: 4% auto;
 }
 
 .subir:hover{
@@ -145,7 +145,7 @@ footer{
     color: darkgoldenrod;
 }
 
-#button-tick, #button-cross,#boton-grabar,#boton-stop,#boton-trad,#subir-f{
+#button-tick, #button-cross,#boton-grabar,#boton-stop,#subir-f{
     width: 25%;
     height: 3vh;
     border-radius: 5px;
@@ -154,7 +154,11 @@ footer{
     transition-duration: 0.5s;
 }
 
-#button-tick:hover,#boton-grabar:hover,#boton-trad:hover,#subir-f:hover{
+#boton-grabar,#boton-stop{
+    margin: 3% auto;
+}
+
+#button-tick:hover,#boton-grabar:hover,#subir-f:hover{
     background-color: green;
     cursor: pointer;
     transform: scale(1.1,1.1);
@@ -166,16 +170,7 @@ footer{
     transform: scale(1.1,1.1);
 }
 
-.audio{
-    margin: 3% auto;
-    width: 20%;
-    border-radius: 5px;
-    border-color: black;
-    border-style: solid;
-    transition-duration: 0.5s;
-}
-
-#button-tick,#boton-grabar,#boton-trad,#subir-f{
+#button-tick,#boton-grabar,#subir-f{
     background-color: greenyellow;
 }
 #button-cross,#boton-stop{
@@ -206,21 +201,13 @@ footer{
     cursor: pointer;
 }
 
-.traduccion{
-    width: 25%;
-    margin: 0 auto;
-    border-radius: 5px;
-    border-color: black;
-    border-style: solid;
-    padding-bottom: 1%;
-}
 
-#subir-f{
+#subir-f,#file{
     display: block;
-    margin: 0 auto;
+    margin: 0% auto;
     margin-bottom: 5%;
 }
 
-#info-trad{
-    color: darkred;
+#file{
+    margin: 5% auto;
 }
