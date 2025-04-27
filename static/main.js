@@ -105,11 +105,11 @@ async function stopRecording() {
         console.log("Grabación detenida.");
 
         // Crear un Blob a partir de los datos de la grabación
-        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
 
         // Crear un FormData para enviar el archivo
         const formData = new FormData();
-        formData.append("file", audioBlob, "audio.webm");  // Agregar el Blob como archivo con un nombre
+        formData.append("file", audioBlob, "audio.mp3");  // Agregar el Blob como archivo con un nombre
 
         try {
             // Enviar el archivo al endpoint /check_genre
