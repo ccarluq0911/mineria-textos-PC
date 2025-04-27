@@ -1,3 +1,6 @@
+let mediaRecorder;
+let audioChunks = [];
+
 const comprobar = async ()=>{
     const texto = document.getElementById("text").value
     if(texto.trim()=="")
@@ -38,67 +41,6 @@ const comprobar = async ()=>{
     }
 }
 
-const feedback = async(validation)=>{
-
-    const comprobacion = document.getElementById("info-resultado").textContent
-    const texto = document.getElementById("text").value
-    if(comprobacion!="" && texto!="" && (comprobacion=="Su canción es de reguetón" || comprobacion=="Su canción no es de reguetón"))
-    {
-        const headers = {
-            "Content-Type":"application/json",
-            "validation":validation
-        }
-        let url = "http://localhost:5002/feedback"
-        const texto = document.getElementById("text").value
-    
-        const response = await fetch(url,{
-            method:"POST",
-            body:JSON.stringify(texto),
-            headers:headers
-        })
-    
-        if(response.ok)
-        {
-            const tipo_feed = document.createElement("b")
-            tipo_feed.setAttribute("id","color-feed")
-            if(validation)
-            {
-                const info_feedback = document.getElementById("info-feedback")
-                info_feedback.textContent = "Se ha registrado la letra como "
-                info_feedback.style.color = "black"
-                tipo_feed.textContent = "reggaetón"
-                info_feedback.appendChild(tipo_feed)
-                document.getElementById("color-feed").style.color = "forestgreen"
-                let interval = setInterval(() => cortar(interval), 3000);
-            }
-            else
-            {
-                const info_feedback = document.getElementById("info-feedback")
-                info_feedback.textContent = "Se ha registrado la letra como "
-                info_feedback.style.color = "black"
-                tipo_feed.textContent = "no reggaetón"
-                info_feedback.appendChild(tipo_feed)
-                document.getElementById("color-feed").style.color = "darkred"
-                let interval = setInterval(() => cortar(interval), 3000);
-            }
-        }
-        else
-        {
-            document.getElementById("info-feedback").textContent = "No se ha podido procesar la solicitud"
-            document.getElementById("info-feedback").style.color = "darkred"
-            document.getElementById("info-feedback").style.fontWeight = "bolder"
-        }
-    }
-    else
-    {
-        document.getElementById("info-feedback").textContent = "Antes de validar la canción debes comprobar su género subiendo la letra"
-        document.getElementById("info-feedback").style.color = "darkred"
-        document.getElementById("info-feedback").style.fontWeight = "bolder"
-    }
-
-    
-}
-
 const cortar = (interval)=>{
     const tipo_feed = document.createElement("b")
     tipo_feed.setAttribute("id","color-feed")
@@ -110,8 +52,6 @@ const cortar = (interval)=>{
     clearInterval(interval)
 }
 
-let mediaRecorder;
-let audioChunks = [];
 
 // Función para iniciar la grabación
 async function startRecording() {
@@ -156,9 +96,7 @@ async function stopRecording() {
     const stopButton = document.getElementById("button-stop");
     const texto = document.getElementById("text").value
 
-    if (mediaRecorder)
-    {
-
+    if (mediaRecorder) {
         recButton.disabled = false;
         stopButton.disabled = true;
 
@@ -172,41 +110,32 @@ async function stopRecording() {
         const formData = new FormData();
         formData.append("file", audioBlob, "audio.webm");  // Agregar el Blob como archivo con un nombre
 
-        try 
-        {
+        try {
             // Enviar el archivo al endpoint /check_genre
             const data = await fetch("http://localhost:5002/upload-audio", {
                 method: "POST",
                 body: formData,
             });
 
-            if(data.ok)
-            {
+            if (data.ok) {
                 infoAudio.textContent = "Audio recibido exitosamente";
                 infoAudio.style.color = "green";
         
                 texto = await data.text()
-            }
-            else
-            {
+            } else {
                 infoAudio.textContent = "El audio no ha podido ser procesado";
                 infoAudio.style.color = "darkred";
             }
-        } 
-        catch (error) 
-        {
+        } catch (error) {
             console.error("Error al enviar el archivo:", error);
             alert("Error al procesar la grabación.");
         }
-    } 
-    else 
-    {
+    } else {
         console.log("No hay grabación en curso.");
     }
 }
 
 const onChangeFile = ()=>{
-    console.log("Algo")
     const fichero = document.getElementById("file");
     const botonF = document.getElementById("subir-f");
     
