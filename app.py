@@ -13,6 +13,39 @@ app = Flask(__name__)
 # nltk.download('stopwords')
 # nltk.download('punkt ')
 
+
+UPLOAD_FOLDER = "uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+def transcribe_audio(file):
+    """Transcribe un archivo de audio y devuelve el texto."""
+    filename = os.path.join("uploads", file.filename)
+    file.save(filename)
+
+    # Convertir a WAV si es necesario
+    if filename.endswith('.mp3'):
+        audio = AudioSegment.from_mp3(filename)
+        filename = filename.replace('.mp3', '.wav')
+        audio.export(filename, format="wav")
+
+    recognizer = sr.Recognizer()
+    try:
+        with sr.AudioFile(filename) as source:
+            audio = recognizer.record(source)
+            text = recognizer.recognize_google(audio, language="es-ES")
+        
+        return text
+    except sr.UnknownValueError:
+        return "No se pudo entender el audio"
+    except sr.RequestError:
+        return "Error con el servicio de reconocimiento"
+    except Exception as e:
+        return str(e)
+    finally:
+        os.remove(filename)  # Eliminar archivo después de la transcripción
+
+
+
 def translate_to_spanish(text):
     idioma = detect(text)
    
