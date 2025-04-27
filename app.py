@@ -1,8 +1,7 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split
-import json
 import pickle
 import pandas as pd
 from nltk.tokenize import word_tokenize
@@ -57,19 +56,6 @@ def check_index():
   text = vectorizer.transform(text_vect)
   prediction = model.predict(text)
   return {'prediction': bool(prediction[0])}
-
-@app.route('/feedback', methods=['POST'])
-def feedback():
-  validation = request.headers.get("validation",type=bool)
-  texto = request.data.decode("utf-8") #se obtiene el texto por el body
-  feedback = pd.DataFrame(data={"Lyrics":[texto],"Regueton":[validation]})
-  feedback['Lyrics'] = feedback['Lyrics'].apply(clean_text)
-  y = feedback.loc[:,'Regueton']
-  X = feedback.loc[:,'Lyrics']
-  X = vectorizer.transform(X)
-  model.partial_fit(X.toarray(), y)
-  pickle.dump(model, open('model.pkl', 'wb'))
-  return jsonify({'status': 'ok'})
 
 if __name__ == '__main__':
   app.run(
