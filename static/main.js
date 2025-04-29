@@ -69,13 +69,49 @@ async function startRecording() {
             audioChunks.push(event.data);
         };
 
-        mediaRecorder.onstop = () => {
+        mediaRecorder.onstop = async () => {
+            const infoAudio = document.getElementById("info-audio");
             const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+            const spinner = document.getElementById("spinner");
+        
+            // Crear URL temporal para descargar
             const audioUrl = URL.createObjectURL(audioBlob);
-            const audio = new Audio(audioUrl);
-            audio.controls = true;
-            document.body.appendChild(audio); // Añadir el reproductor de audio al cuerpo de la página
+            const downloadLink = document.createElement("a");
+            downloadLink.href = audioUrl;
+            downloadLink.download = "audio.webm";
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+            URL.revokeObjectURL(audioUrl);
+        
+            // Crear el FormData para enviar
+            const formData = new FormData();
+            formData.append("file", audioBlob, "audio.webm");
+            spinner.style.display = "inline-block";
+            try {
+                const data = await fetch("http://localhost:5002/upload-audio", {
+                    method: "POST",
+                    body: formData,
+                });
+        
+                if (data.ok) {
+                    infoAudio.textContent = "Audio recibido exitosamente";
+                    infoAudio.style.color = "green";
+                    spinner.style.display = "none";
+                    let raw_text = await data.json()
+
+                    document.getElementById("text").value = raw_text.text;
+
+                } else {
+                    infoAudio.textContent = "El audio no ha podido ser procesado";
+                    infoAudio.style.color = "darkred";
+                }
+            } catch (error) {
+                console.error("Error al enviar el archivo:", error);
+                alert("Error al procesar la grabación.");
+            }
         };
+        
 
         recButton.disabled = true;
         stopButton.disabled = false;
@@ -94,8 +130,6 @@ async function startRecording() {
 async function stopRecording() {
     const recButton = document.getElementById("boton-grabar");
     const stopButton = document.getElementById("boton-stop");
-    const infoAudio = document.getElementById("info-audio");
-    let texto = document.getElementById("text").value
 
     if (mediaRecorder) {
         recButton.disabled = false;
@@ -103,37 +137,40 @@ async function stopRecording() {
 
         mediaRecorder.stop();
         console.log("Grabación detenida.");
-
-        // Crear un Blob a partir de los datos de la grabación
-        const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
-
-        // Crear un FormData para enviar el archivo
-        const formData = new FormData();
-        formData.append("file", audioBlob, "audio.mp3");  // Agregar el Blob como archivo con un nombre
-
-        try {
-            // Enviar el archivo al endpoint /check_genre
-            const data = await fetch("http://localhost:5002/upload-audio", {
-                method: "POST",
-                body: formData,
-            });
-
-            if (data.ok) {
-                infoAudio.textContent = "Audio recibido exitosamente";
-                infoAudio.style.color = "green";
-        
-                texto = await data.text()
-            } else {
-                infoAudio.textContent = "El audio no ha podido ser procesado";
-                infoAudio.style.color = "darkred";
-            }
-        } catch (error) {
-            console.error("Error al enviar el archivo:", error);
-            alert("Error al procesar la grabación.");
-        }
-    } else {
-        console.log("No hay grabación en curso.");
     }
+}
+
+async function uploadAudio() {
+    const file = document.getElementById("file").files[0];
+    const infoAudio = document.getElementById("info-audio");
+    const spinner = document.getElementById("spinner");
+    const formData = new FormData();
+    formData.append("file", file, file.name);
+    spinner.style.display = "inline-block";
+
+    try {
+        const data = await fetch("http://localhost:5002/upload-audio", {
+            method: "POST",
+            body: formData,
+        });
+
+        if (data.ok) {
+            infoAudio.textContent = "Audio recibido exitosamente";
+            infoAudio.style.color = "green";
+            spinner.style.display = "none";
+            let raw_text = await data.json()
+
+            document.getElementById("text").value = raw_text.text;
+
+        } else {
+            infoAudio.textContent = "El audio no ha podido ser procesado";
+            infoAudio.style.color = "darkred";
+        }
+    } catch (error) {
+        console.error("Error al enviar el archivo:", error);
+        alert("Error al procesar la grabación.");
+    }
+
 }
 
 const onChangeFile = ()=>{

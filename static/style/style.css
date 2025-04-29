@@ -211,3 +211,7 @@ footer{
 #file{
     margin: 5% auto;
 }
+
+#spinner{
+    display: none;;
+}

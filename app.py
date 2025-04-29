@@ -11,6 +11,8 @@ from deep_translator import GoogleTranslator
 import os
 import speech_recognition as sr
 from pydub import AudioSegment
+import tempfile
+import subprocess
 
 app = Flask(__name__)
 # nltk.download('stopwords')
@@ -21,30 +23,47 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 def transcribe_audio(file):
     """Transcribe un archivo de audio y devuelve el texto."""
-    filename = os.path.join("uploads", file.filename)
-    file.save(filename)
+    suffix = ".webm"
+    if file.name.endswith('.mp3'):
+        suffix = ".mp3"
+    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp_input:
+        file.save(temp_input.name)
 
-    # Convertir a WAV si es necesario
-    if filename.endswith('.mp3'):
-        audio = AudioSegment.from_mp3(filename)
-        filename = filename.replace('.mp3', '.wav')
-        audio.export(filename, format="wav")
+    temp_output = tempfile.NamedTemporaryFile(delete=False, suffix=".wav")
+    temp_output.close()
 
-    recognizer = sr.Recognizer()
-    try:
-        with sr.AudioFile(filename) as source:
-            audio = recognizer.record(source)
-            text = recognizer.recognize_google(audio, language="es-ES")
+    # Convertir a .wav usando ffmpeg en un proceso separado
+    result = subprocess.run([
+        "ffmpeg", "-y",  # sobrescribir si existe
+        "-i", temp_input.name,
+        "-ar", "16000",  # sample rate recomendado para STT
+        "-ac", "1",      # mono
+        temp_output.name
+    ], capture_output=True, text=True)
+
+    if result.returncode != 0:
+        print("FFmpeg error:", result.stderr)
+        return f"El proceso de conversión ha fallado con el error: {result.stderr}"
+    else:   
+      print(temp_output.name)
+      print(temp_output)
+      recognizer = sr.Recognizer()
+
+      try:
         
+        with sr.AudioFile(temp_output.name) as source:
+            audio_data = recognizer.record(source)
+            text = recognizer.recognize_google(audio_data, language="es-ES")
+            print(text)
         return text
-    except sr.UnknownValueError:
-        return "No se pudo entender el audio"
-    except sr.RequestError:
-        return "Error con el servicio de reconocimiento"
-    except Exception as e:
-        return str(e)
-    finally:
-        os.remove(filename)  # Eliminar archivo después de la transcripción
+      except sr.RequestError as e:
+          return f"Error con el servicio de reconocimiento: {e}"
+      except Exception as e:
+          return f"Error general: {e}"
+      finally:
+        os.remove(temp_input.name)
+        os.remove(temp_output.name)
+       
 
 def translate_to_spanish(text):
     idioma = detect(text)
@@ -85,7 +104,7 @@ def create_model_and_vectorizer():
   pickle.dump(model, open('model.pkl', 'wb'))
 
 # Comentamos para no reiniciar el modelo cada vez que se inicia el servidor  
-# create_model_and_vectorizer()
+create_model_and_vectorizer()
 model = pickle.load(open('model.pkl', 'rb'))
 vectorizer = pickle.load(open('vectorizer.pkl', 'rb'))
 
@@ -114,7 +133,7 @@ def upload_audio():
     
     file = request.files['file']
     text = transcribe_audio(file)
-    return {'prediction': make_prediction(text)}
+    return {'text': text}
 
 if __name__ == '__main__':
   app.run(
