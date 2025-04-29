@@ -45,8 +45,6 @@ def transcribe_audio(file):
         print("FFmpeg error:", result.stderr)
         return f"El proceso de conversión ha fallado con el error: {result.stderr}"
     else:   
-      print(temp_output.name)
-      print(temp_output)
       recognizer = sr.Recognizer()
 
       try:
@@ -54,7 +52,6 @@ def transcribe_audio(file):
         with sr.AudioFile(temp_output.name) as source:
             audio_data = recognizer.record(source)
             text = recognizer.recognize_google(audio_data, language="es-ES")
-            print(text)
         return text
       except sr.RequestError as e:
           return f"Error con el servicio de reconocimiento: {e}"
@@ -67,11 +64,12 @@ def transcribe_audio(file):
 
 def translate_to_spanish(text):
     idioma = detect(text)
-   
+    print(idioma)
     if idioma == 'es':
         return text
     else:
         traduccion = GoogleTranslator(source='auto', target='es').translate(text)
+        print(traduccion)
         return traduccion
       
 def clean_text(text):
@@ -104,7 +102,7 @@ def create_model_and_vectorizer():
   pickle.dump(model, open('model.pkl', 'wb'))
 
 # Comentamos para no reiniciar el modelo cada vez que se inicia el servidor  
-create_model_and_vectorizer()
+# create_model_and_vectorizer()
 model = pickle.load(open('model.pkl', 'rb'))
 vectorizer = pickle.load(open('vectorizer.pkl', 'rb'))
 
